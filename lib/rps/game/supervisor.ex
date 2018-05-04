@@ -1,6 +1,8 @@
 defmodule Rps.Game.Supervisor do
   use DynamicSupervisor
 
+  alias Rps.Game.Session
+
   # PUBLIC API
 
   def start_link(args) do
@@ -8,7 +10,7 @@ defmodule Rps.Game.Supervisor do
   end
 
   def start_game(id) do
-    DynamicSupervisor.start_child(__MODULE__, {Rps.Game, id})
+    DynamicSupervisor.start_child(__MODULE__, {Session, id})
   end
 
   # CALLBACKS
