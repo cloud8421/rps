@@ -8,6 +8,8 @@ defmodule Rps.Application do
   def start(_type, _args) do
     # List all child processes to be supervised
     children = [
+      {Registry, keys: :unique, name: Registry.Game},
+      Rps.Game.Supervisor
       # Starts a worker by calling: Rps.Worker.start_link(arg)
       # {Rps.Worker, arg},
     ]
