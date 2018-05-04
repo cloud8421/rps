@@ -19,4 +19,8 @@ defmodule Rps.Application do
     opts = [strategy: :one_for_one, name: Rps.Supervisor]
     Supervisor.start_link(children, opts)
   end
+
+  def start_phase(:create_score_table, _type, _args) do
+    Rps.Score.create_table()
+  end
 end

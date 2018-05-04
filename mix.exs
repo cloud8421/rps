@@ -15,7 +15,10 @@ defmodule Rps.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {Rps.Application, []}
+      mod: {Rps.Application, []},
+      start_phases: [
+        create_score_table: []
+      ]
     ]
   end
 

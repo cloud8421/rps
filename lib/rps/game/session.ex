@@ -1,7 +1,7 @@
 defmodule Rps.Game.Session do
   use GenServer
 
-  alias Rps.{Game, Rules}
+  alias Rps.{Game, Rules, Score}
 
   @type on_join :: Game.on_join() | no_return
   @type on_move :: Game.on_move() | no_return
@@ -59,7 +59,10 @@ defmodule Rps.Game.Session do
   end
 
   def terminate(:normal, game) do
-    Game.result(game)
+    case Game.result(game) do
+      {:ok, result} -> Score.record(result)
+      _other -> :ok
+    end
   end
 
   # PRIVATE

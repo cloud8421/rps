@@ -20,5 +20,7 @@ defmodule Rps.Test do
     assert :ok == Rps.move(game_id, "player-two", :paper)
 
     refute Process.alive?(game_pid)
+
+    assert [{"player-one", 1}] == Rps.Score.all()
   end
 end
