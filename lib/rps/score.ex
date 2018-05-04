@@ -9,7 +9,7 @@ defmodule Rps.Score do
   def record(:draw), do: :ok
 
   def record(result) do
-    # Process.sleep(5)
+    Process.sleep(5)
     :ets.update_counter(__MODULE__, result, 1, {result, 0})
     :ok
   end

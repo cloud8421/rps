@@ -4,6 +4,8 @@ defmodule Rps.Test do
   test "example game session" do
     {:ok, game_id, game_pid} = Rps.start_game()
 
+    ref = Process.monitor(game_pid)
+
     # JOIN
 
     assert :ok == Rps.join(game_id, "player-one")
@@ -19,7 +21,7 @@ defmodule Rps.Test do
     assert :ok == Rps.move(game_id, "player-one", :scissors)
     assert :ok == Rps.move(game_id, "player-two", :paper)
 
-    refute Process.alive?(game_pid)
+    assert_receive {:DOWN, ^ref, :process, ^game_pid, :normal}
 
     assert [{"player-one", 1}] == Rps.Score.all()
   end
