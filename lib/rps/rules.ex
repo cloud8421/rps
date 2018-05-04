@@ -10,4 +10,9 @@ defmodule Rps.Rules do
   def winner(:paper, :scissors), do: :scissors
   def winner(:scissors, :paper), do: :scissors
   def winner(move, move), do: :draw
+
+  def validate_move(:rock), do: :ok
+  def validate_move(:paper), do: :ok
+  def validate_move(:scissors), do: :ok
+  def validate_move(_invalid), do: {:error, :invalid_move}
 end

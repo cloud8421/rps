@@ -20,6 +20,12 @@ defmodule Rps.Game do
     GenServer.call(via(game_id), {:join, player_id})
   end
 
+  @spec move(id, player_id, Rps.Rules.move()) ::
+          :ok | {:error, :not_in_game} | {:error, :invalid_move} | no_return
+  def move(game_id, player_id, move) do
+    GenServer.call(via(game_id), {:move, player_id, move})
+  end
+
   # CALLBACKS
 
   def init(game_id) do
@@ -36,10 +42,29 @@ defmodule Rps.Game do
     end
   end
 
+  def handle_call({:move, player_id, move}, _from, state) do
+    with :ok <- check_player_in_game(state, player_id),
+         :ok <- Rps.Rules.validate_move(move) do
+      new_state = %{state | moves: Map.put(state.moves, player_id, move)}
+      {:reply, :ok, new_state}
+    else
+      error ->
+        {:reply, error, state}
+    end
+  end
+
   # PRIVATE
 
   defp via(game_id) do
     {:via, Registry, {Registry.Game, game_id}}
+  end
+
+  defp check_player_in_game(state, player_id) do
+    if MapSet.member?(state.players, player_id) do
+      :ok
+    else
+      {:error, :not_in_game}
+    end
   end
 
   defp game_full?(state) do
