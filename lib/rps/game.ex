@@ -7,7 +7,8 @@ defmodule Rps.Game do
 
   @type id :: String.t()
   @type player_id :: String.t()
-  @type t :: %__MODULE__{id: nil | id, players: MapSet.t(), moves: Map.t()}
+  @type moves :: %{optional(player_id) => Rules.move()}
+  @type t :: %__MODULE__{id: nil | id, players: MapSet.t(), moves: moves}
   @type result :: player_id | :draw
 
   @type on_join :: :ok | {:error, :game_full}

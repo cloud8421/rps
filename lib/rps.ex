@@ -20,7 +20,7 @@ defmodule Rps do
   @doc """
   Starts a new game given a game id.
   """
-  @spec start_game() :: {:ok, Rps.Game.id(), pid} | {:error, {:already_started, pid}}
+  @spec start_game(Rps.Game.id()) :: {:ok, Rps.Game.id(), pid} | {:error, {:already_started, pid}}
   def start_game(game_id) do
     case Rps.Game.Supervisor.start_game(game_id) do
       {:ok, pid} ->
