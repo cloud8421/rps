@@ -42,11 +42,24 @@ defmodule Rps.Game.Session do
   def handle_call({:move, player_id, move}, _from, game) do
     case Game.move(game, player_id, move) do
       {:ok, new_game} ->
+        GenServer.cast(self(), :check_if_complete)
         {:reply, :ok, new_game}
 
       error ->
         {:reply, error, game}
     end
+  end
+
+  def handle_cast(:check_if_complete, game) do
+    if Game.complete?(game) do
+      {:stop, :normal, game}
+    else
+      {:noreply, game}
+    end
+  end
+
+  def terminate(:normal, game) do
+    Game.result(game)
   end
 
   # PRIVATE
