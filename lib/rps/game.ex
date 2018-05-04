@@ -2,13 +2,12 @@ defmodule Rps.Game do
   alias Rps.Rules
 
   defstruct id: nil,
-            players: MapSet.new(),
             moves: %{}
 
   @type id :: String.t()
   @type player_id :: String.t()
-  @type moves :: %{optional(player_id) => Rules.move()}
-  @type t :: %__MODULE__{id: nil | id, players: MapSet.t(), moves: moves}
+  @type moves :: %{optional(player_id) => :undecided | Rules.move()}
+  @type t :: %__MODULE__{id: nil | id, moves: moves}
   @type result :: player_id | :draw
 
   @type on_join :: :ok | {:error, :game_full}
@@ -26,7 +25,7 @@ defmodule Rps.Game do
     if full?(game) do
       {:error, :game_full}
     else
-      new_game = %{game | players: MapSet.put(game.players, player_id)}
+      new_game = %{game | moves: Map.put(game.moves, player_id, :undecided)}
       {:ok, new_game}
     end
   end
@@ -55,7 +54,7 @@ defmodule Rps.Game do
   end
 
   defp check_player_in_game(game, player_id) do
-    if MapSet.member?(game.players, player_id) do
+    if Map.has_key?(game.moves, player_id) do
       :ok
     else
       {:error, :not_in_game}
@@ -63,11 +62,11 @@ defmodule Rps.Game do
   end
 
   defp full?(game) do
-    MapSet.size(game.players) >= 2
+    Map.size(game.moves) == 2
   end
 
   defp all_players_moved?(game) do
-    Map.size(game.moves) == 2
+    :undecided not in Map.values(game.moves)
   end
 
   defp game_result(game) do
