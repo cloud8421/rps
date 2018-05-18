@@ -25,6 +25,12 @@ defmodule Rps.Game.Session do
 
   # CALLBACKS
 
+  def child_spec(args) do
+    args
+    |> super()
+    |> Map.put(:restart, :temporary)
+  end
+
   def init(game_id) do
     {:ok, Game.new(game_id)}
   end
