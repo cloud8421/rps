@@ -36,6 +36,7 @@ defmodule Rps.Game.Session do
   end
 
   def init(game_id) do
+    Process.flag(:trap_exit, true)
     {:ok, Game.new(game_id)}
   end
 
