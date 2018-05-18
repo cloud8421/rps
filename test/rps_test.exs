@@ -19,9 +19,16 @@ defmodule Rps.Test do
 
     assert :ok == Rps.move(game_id, "player-one", :rock)
     assert :ok == Rps.move(game_id, "player-one", :scissors)
+
+    refute_receive {:DOWN, ^ref, :process, ^game_pid, :normal}, 500
+
     assert :ok == Rps.move(game_id, "player-two", :paper)
 
-    assert_receive {:DOWN, ^ref, :process, ^game_pid, :normal}
+    Process.sleep(100)
+
+    assert :ok == Rps.move(game_id, "player-two", :paper)
+
+    assert_receive {:DOWN, ^ref, :process, ^game_pid, :normal}, 500
 
     assert [{"player-one", 1}] == Rps.Score.all()
   end

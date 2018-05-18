@@ -3,6 +3,8 @@ defmodule Rps.Game.Session do
 
   alias Rps.{Game, Rules, Score}
 
+  @final_move_timeout 300
+
   @type on_join :: Game.on_join() | no_return
   @type on_move :: Game.on_move() | no_return
 
@@ -48,15 +50,14 @@ defmodule Rps.Game.Session do
   def handle_call({:move, player_id, move}, _from, game) do
     case Game.move(game, player_id, move) do
       {:ok, new_game} ->
-        GenServer.cast(self(), :check_if_complete)
-        {:reply, :ok, new_game}
+        {:reply, :ok, new_game, @final_move_timeout}
 
       error ->
         {:reply, error, game}
     end
   end
 
-  def handle_cast(:check_if_complete, game) do
+  def handle_info(:timeout, game) do
     if Game.complete?(game) do
       {:stop, :normal, game}
     else
