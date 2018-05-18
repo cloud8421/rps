@@ -1,6 +1,8 @@
 defmodule Rps.Game.Session do
   use GenServer
 
+  require Logger
+
   alias Rps.{Game, Rules, Score}
 
   @final_move_timeout 300
@@ -70,6 +72,12 @@ defmodule Rps.Game.Session do
       {:ok, result} -> Score.record(result)
       _other -> :ok
     end
+  end
+
+  def terminate(other_reason, _game) do
+    Logger.error(fn ->
+      "abnormal termination with reason #{inspect(other_reason)}"
+    end)
   end
 
   # PRIVATE
